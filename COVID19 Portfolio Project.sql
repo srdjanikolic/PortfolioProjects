@@ -104,25 +104,6 @@ where dea.continent is not null
 order by 2,3
 
 
---USE CTE
-
-With POPvsVAC(Continent, Location, Date, Population, New_Vaccinations, RollingCountPeopleVaccinated)
-as
-(
-Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
-sum(convert(int,vac.new_vaccinations)) over (Partition by dea.Location order by dea.location,
-dea.Date) as RollingCountPeopleVaccinated
-from CovidDeaths$ as dea
-join CovidVaccinations$ as vac
-	on dea.location = vac.location
-	and dea.date = vac.date
-where dea.continent is not null
---order by 2,3
-)
-select *,(RollingCountPeopleVaccinated/Population)*100 as PercentageofPeopleVaccinated
-from POPvsVAC
-
-
 --Temp Table
 
 Create Table #PercentPopulationVaccinated
