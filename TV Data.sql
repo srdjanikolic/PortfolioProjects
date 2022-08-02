@@ -94,8 +94,7 @@ group by gender;
 # how many Viewers own a Home
 select concat(count(customer_ID)/300 * 100,'%') as Own_Home
 from cabletvsubscribersdata
-where ownHome = 'ownYes'
-;
+where ownHome = 'ownYes';
 
 # how many Viewers who own a home and are subscribed to us
 
@@ -109,6 +108,17 @@ select subscribe, count(Segment)
 from cabletvsubscribersdata
 where Segment = 'Travelers'
 group by subscribe;
+
+#selecting customers and labeling them depending on the the amount of salary earned
+
+select customer_id,income,
+case
+	when avg(income) between 0 and 30000 then "Low Income"
+    when avg(income) between 31000 and 50000 then "Middle Income"
+    else "High Income" end as IncomeSituation
+from cabletvsubscribersdata
+group by customer_id;
+
 
 # load in a table with customer IDs and respective cities they live in 
 select * from
