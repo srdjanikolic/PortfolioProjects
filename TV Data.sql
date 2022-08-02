@@ -1,4 +1,3 @@
-
 # some data insights on CableTv Company were drawn from the following file on Kaggle : https://www.kaggle.com/datasets/amansaxena/cabletv-subscriber-data
 # additional file was added with randomly populated cities related to ID
 
@@ -77,13 +76,20 @@ select round(count(customer_ID)/300 * 100,1) as Percent_Viewers_NonSub,
 from cabletvsubscribersdata
 where subscribe = 'subNo';
 
-# Subscriber vs Non subscriber per Gender
+# Non subscriber per Gender
 
-select gender,round(count(customer_ID)/300 * 100,1) as Percent_Viewers_NonSub,
-(100-(round(count(customer_ID)/300 * 100,1))) as Percent_Viewers_Sub
+select gender,round(count(customer_ID)/300 * 100,1) as Percent_Viewers_NonSub
 from cabletvsubscribersdata
 where subscribe = 'subNo'
 group by gender;
+
+#subscribers per gender which are subscribed but do not own a home
+
+select gender,round(count(customer_ID)/300 * 100,1) as Percent_Viewers_NonSub
+from cabletvsubscribersdata
+where subscribe = 'subYes' and ownHome = 'ownNo'
+group by gender;
+
 
 # how many Viewers own a Home
 select concat(count(customer_ID)/300 * 100,'%') as Own_Home
@@ -110,10 +116,10 @@ cabletvcity;
 
 #check the number of customers in each city, Wien has the most customers...
 
-select city, count(city)
+select city, count(city) as CustomerCount
 from cabletvcity
 group by city
-order by count(city) desc; 
+order by CustomerCount desc;
 
  # average age of viewers is highest in Graz and lowest in Linz
  
@@ -126,7 +132,7 @@ order by avg_age desc;
 
 # average income in Wien by gender
 
-select city, gender,avg(income)
+select city, gender,round(avg(income),0) as Average_Income
 from cabletvsubscribersdata as main
 inner join cabletvcity as city
 on main.customer_id = city.customer_id
@@ -142,21 +148,3 @@ inner join cabletvsubscribersdata as main
 on city.customer_id = main.customer_id
 where income > 40000
 group by city;
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
