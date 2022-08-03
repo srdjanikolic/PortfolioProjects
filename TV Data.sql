@@ -6,34 +6,34 @@ select * from
 cabletvsubscribersdata;
 
 #number of customers
-select count(*)
+select count(*) as NumberCustomers
 from 
 cabletvsubscribersdata;
 
-select distinct count(income)
+select distinct count(customer_Id) as DistinctCustomers
 from 
 cabletvsubscribersdata;
 
 #take a look at the average age of our viewers
 
-select avg(age) as Avg_age_of_Viewers
+select round(avg(age),1) as Avg_age_of_Viewers
 from cabletvsubscribersdata;
 
 #take a look at percentage of male vs female Viewers
 
-select gender, round(count(gender)/300*100) as Viewer_Gender_Percent
+select gender, concat(count(gender)/300*100,"%") as Viewer_Gender_Percent
 from cabletvsubscribersdata
 group by gender;
 
 # take a look at the average age of male viewers and average age of female viewers
 
-select gender, avg(age) as Viewer_Avg_AGE
+select gender, round(avg(age),1) as Viewer_Avg_AGE
 from cabletvsubscribersdata
 group by gender;
 
 #let's check how many of our customer have kids
 
-select count(customer_id)
+select count(customer_id) as CustomersWithKids
 from cabletvsubscribersdata
 where kids >=1;
 
@@ -43,9 +43,9 @@ select customer_id, income
 from cabletvsubscribersdata
 where kids = (select max(kids) from cabletvsubscribersdata);
 
- #who are the customers that have most kids(additional members)
+ #percentage of customers with no kids
  
-select round(count(customer_id)/300 * 100) as Percent_Viewers_NO_Kids
+select concat(count(customer_id)/300 * 100,"%") as Percent_Viewers_NO_Kids
 from cabletvsubscribersdata
 where kids < 1;
 
@@ -60,11 +60,11 @@ order by income desc;
 select gender, round(avg(income)) as Avg_Income_perGender
 from cabletvsubscribersdata
 group by gender
-order by income desc;
+order by Avg_Income_perGender desc;
 
 #average income of viewers with certain number of kids
 
-select kids, round(avg(income))
+select kids as NumberOfKids, round(avg(income)) as Average_income
 from cabletvsubscribersdata
 group by kids
 order by kids desc;
@@ -98,22 +98,16 @@ where ownHome = 'ownYes';
 
 # how many Viewers who own a home and are subscribed to us
 
-select concat(count(customer_ID),'%') as OwnHouse_AreSub
+select count(customer_ID)/300*100 as OwnHouseAreSub_Percentage
 from cabletvsubscribersdata
 where ownHome = 'ownYes' and subscribe = 'subYes';
 
-#how many Travelers are not subscribed to us
-
-select subscribe, count(Segment)
-from cabletvsubscribersdata
-where Segment = 'Travelers'
-group by subscribe;
 
 #selecting customers and labeling them depending on the the amount of salary earned
 
 select customer_id,income,
 case
-    when avg(income) between 0 and 30000 then "Low Income"
+	when avg(income) between 0 and 30000 then "Low Income"
     when avg(income) between 31000 and 50000 then "Middle Income"
     else "High Income" end as IncomeSituation
 from cabletvsubscribersdata
