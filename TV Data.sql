@@ -107,7 +107,7 @@ where ownHome = 'ownYes' and subscribe = 'subYes';
 
 select customer_id,income,
 case
-	when avg(income) between 0 and 30000 then "Low Income"
+    when avg(income) between 0 and 30000 then "Low Income"
     when avg(income) between 31000 and 50000 then "Middle Income"
     else "High Income" end as IncomeSituation
 from cabletvsubscribersdata
