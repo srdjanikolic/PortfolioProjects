@@ -14,6 +14,14 @@ select distinct count(customer_Id) as DistinctCustomers
 from 
 cabletvsubscribersdata;
 
+# how many viewers including children are there
+WITH q1 AS ( 
+	select COUNT(customer_id) as CUS_ID from cabletvsubscribersdata)
+    
+select (sum(kids) + (select CUS_ID from q1)) as Total_ViewerCount
+from cabletvsubscribersdata;
+
+
 #take a look at the average age of our viewers
 
 select round(avg(age),1) as Avg_age_of_Viewers
@@ -107,7 +115,7 @@ where ownHome = 'ownYes' and subscribe = 'subYes';
 
 select customer_id,income,
 case
-    when avg(income) between 0 and 30000 then "Low Income"
+	when avg(income) between 0 and 30000 then "Low Income"
     when avg(income) between 31000 and 50000 then "Middle Income"
     else "High Income" end as IncomeSituation
 from cabletvsubscribersdata
@@ -116,7 +124,8 @@ group by customer_id;
 
 # load in a table with customer IDs and respective cities they live in 
 select * from
-cabletvcity;
+cabletvcity
+LIMIT 20;
 
 #check the number of customers in each city, Wien has the most customers...
 
@@ -152,3 +161,43 @@ inner join cabletvsubscribersdata as main
 on city.customer_id = main.customer_id
 where income > 40000
 group by city;
+
+#subquery -- info about everyone earning more than the average salary of all the viewers
+
+SELECT customer_id
+	,gender
+	,income
+FROM cabletvsubscribersdata
+WHERE income > (
+		SELECT avg(income)
+		FROM cabletvsubscribersdata
+		);
+
+-- temp Table 
+
+CREATE TABLE temp_table 
+(Customer_id varchar(50),
+AvgAge int,
+AvgIncome int);
+
+select * from
+temp_table;
+
+insert into temp_table 
+select count(customer_Id) as count, avg(age), avg(income)
+from cabletvsubscribersdata
+where income > 70000;
+
+select * from
+temp_table;
+
+rename table temp_table to HighIncomeViewers;
+
+select * from
+HighIncomeViewers;
+
+ALTER table HighIncomeViewers
+rename column Customer_id TO Number_ofCustomers;
+
+select * from
+HighIncomeViewers;
